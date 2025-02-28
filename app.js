@@ -41,6 +41,17 @@ main().then(() => {
 async function main() {
     await mongoose.connect(dbUrl);
 }
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+   crypto: {
+        secret:process.env.SECRET,
+    },
+    touchAfter: 24 * 3600,
+});
+store.on("error", function (e) {
+    console.log("Session Store Error", e);
+});
+
 
 const sessionConfig = {
     store,
@@ -53,16 +64,6 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 };
-const store = MongoStore.create({
-    mongoUrl: dbUrl,
-   crypto: {
-        secret:process.env.SECRET,
-    },
-    touchAfter: 24 * 3600,
-});
-store.on("error", function (e) {
-    console.log("Session Store Error", e);
-});
 
 app.use(session(sessionConfig));
 app.use(connectFlash());
