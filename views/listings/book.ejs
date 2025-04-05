@@ -1,0 +1,41 @@
+<% layout("/layouts/boilerplate") %>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <div class="card shadow-lg p-4">
+                <h3 class="text-center text-primary mb-4">Book an Appointment</h3>
+                <form method="POST" action="/listings/<%= listing._id %>/bookings">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Your Name</label>
+                        <input type="text" name="booking[name]" class="form-control" placeholder="Enter your name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="booking[email]" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="text" name="booking[phone]" class="form-control" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Appointment Date</label>
+                        <input type="date" name="booking[date]" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Appointment Time</label>
+                        <input type="time" name="booking[time]" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="doctor" class="form-label">Select Doctor</label>
+                        <select name="booking[doctor]" class="form-select" required>
+                            <% listing.doctors.forEach(function(doctor) { %>
+                                <option value="<%= doctor.name %>"><%= doctor.name %> - <%= doctor.specialty %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
