@@ -1,5 +1,3 @@
-
-
 <% layout("/layouts/boilerplate")%>
 
 <style>
@@ -104,26 +102,47 @@
       </div>
 
   </div>
-  <div class="row row-cols-lg-6 row-cols-md-3 row-cols-sm-2 mt-3">
-      <% for(let listing of listings) { %>
-          <a href="/listings/<%= listing._id %>" class="list-link">
-              <div class="card col listing-card" style="width: 100%; max-width: 20rem; height: auto;">
-                  <img src="<%= listing.image.url %>" class="card-img-top" alt="listing image" style="height: 20rem;"/>
-                  <div class="card-img-overlay"></div>
-                  <div class="card-body">
-                      <p class="card-text">
-                          <b><%= listing.title %></b><br/>
-                          <% if (listing.price) { %>
-                              &#8377; <%= listing.price.toLocaleString("en-IN") %>/night <i class="tax-info">&nbsp; +18% GST</i>
-                          <% } else { %>
-                              Price not available
-                          <% } %>
-                      </p>
-                  </div>
-              </div>
-          </a>
+  <div class="container mt-5">
+    <h1 class="text-center">Listings</h1>
+    <div class="row row-cols-lg-6 row-cols-md-3 row-cols-sm-2 mt-3">
+      <% for (let listing of listings) { %>
+        <a href="/listings/<%= listing._id %>" class="list-link">
+          <div class="card col listing-card" style="width: 100%; max-width: 20rem; height: auto;">
+            <img 
+              src="<%= listing.image && listing.image.url ? listing.image.url : 'https://via.placeholder.com/300' %>" 
+              class="card-img-top" 
+              alt="listing image" 
+              style="height: 20rem;" 
+            />
+            <div class="card-body">
+              <h5 class="card-title"><%= listing.name %></h5>
+              <p class="card-text"><%= listing.description %></p>
+              <p class="card-text"><strong>Price:</strong> $<%= listing.price %></p>
+            </div>
+          </div>
+        </a>
       <% } %>
+    </div>
   </div>
+  <!-- <h1 class="text-center">Hospitals</h1>
+  <div class="row row-cols-lg-6 row-cols-md-3 row-cols-sm-2 mt-3">
+    <% for (let hospital of hospitals) { %>
+      <a href="/listings/<%= hospital._id %>" class="list-link">
+        <div class="card col listing-card" style="width: 100%; max-width: 20rem; height: auto;">
+          <img 
+            src="<%= hospital.image && hospital.image.url ? hospital.image.url : 'https://via.placeholder.com/300' %>" 
+            class="card-img-top" 
+            alt="hospital image" 
+            style="height: 20rem;" 
+          />
+          <div class="card-body">
+            <h5 class="card-title"><%= hospital.name %></h5>
+            <p class="card-text"><%= hospital.location %></p>
+          </div>
+        </div>
+      </a>
+    <% } %>
+  </div> -->
   <script>
     let taxSwitch = document.getElementById("flexSwitchCheckDefault");
 

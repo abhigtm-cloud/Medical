@@ -28,8 +28,8 @@
                     <div class="mb-3">
                         <label for="doctor" class="form-label">Select Doctor</label>
                         <select name="booking[doctor]" class="form-select" required>
-                            <% listing.doctors.forEach(function(doctor) { %>
-                                <option value="<%= doctor.name %>"><%= doctor.name %> - <%= doctor.specialty %></option>
+                            <% hospital.doctors.forEach(function(doctor) { %>
+                                <option value="<%= doctor._id %>"><%= doctor.name %> - <%= doctor.specialization %></option>
                             <% }) %>
                         </select>
                     </div>
