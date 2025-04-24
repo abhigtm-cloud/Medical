@@ -11,33 +11,41 @@ mongoose.connect(Mongo_URL, { useNewUrlParser: true, useUnifiedTopology: true })
         console.log('MongoDB connection error:', err);
     });
 
-const seedListings = async () => {
-    await Listing.deleteMany({});
-    const listings = [
-        {
-            name: "Cozy Apartment",
-            description: "A beautiful apartment in the city center.",
-            price: 120,
-            location: "Downtown",
-            image: {
-                filename: "apartmentimage",
-                url: "https://images.unsplash.com/photo-1576765607924-1e6b7f3aebb3",
+    const seedListings = async () => {
+        await Listing.deleteMany({});
+        const listings = [
+            {
+                name: "Cozy Apartment",
+                description: "A beautiful apartment in the city center.",
+                price: 120,
+                location: "Downtown",
+                image: {
+                    filename: "apartmentimage",
+                    url: "https://images.unsplash.com/photo-1576765607924-1e6b7f3aebb3",
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [-73.935242, 40.73061], // Example coordinates
+                },
             },
-        },
-        {
-            name: "Luxury Villa",
-            description: "A luxurious villa with a private pool.",
-            price: 500,
-            location: "Suburbs",
-            image: {
-                filename: "villaimage",
-                url: "https://images.unsplash.com/photo-1580281657521-936a5cb4a0d5",
+            {
+                name: "Luxury Villa",
+                description: "A luxurious villa with a private pool.",
+                price: 500,
+                location: "Suburbs",
+                image: {
+                    filename: "villaimage",
+                    url: "https://images.unsplash.com/photo-1580281657521-936a5cb4a0d5",
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [-118.243683, 34.052235], // Example coordinates
+                },
             },
-        },
-    ];
-    await Listing.insertMany(listings);
-    console.log('Database seeded with listings');
-    mongoose.connection.close();
-};
-
-seedListings();
+        ];
+        await Listing.insertMany(listings);
+        console.log('Database seeded with listings');
+        mongoose.connection.close();
+    };
+    
+    seedListings();

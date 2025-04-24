@@ -1,7 +1,12 @@
 const Listing = require('../models/listing');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const accessToken = process.env.MAP_TOKEN;
-const geocodingClient = mbxGeocoding({ accessToken: accessToken });
+const accessToken = process.env.MAPBOX_TOKEN; // Ensure this matches the .env variable name
+
+if (!accessToken) {
+    throw new Error('Mapbox access token is missing. Check your .env file.');
+}
+
+const geocodingClient = mbxGeocoding({ accessToken });
 
 module.exports.index = async (req, res) => {
   const listings = await Listing.find({}); // Fetch all listings

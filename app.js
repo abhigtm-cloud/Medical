@@ -1,95 +1,115 @@
 if (process.env.NODE_ENV !== "production") {
-  require('dotenv').config();
+    require("dotenv").config();
 }
 
-console.log("Mapbox Token:", process.env.MAP_TOKEN); // Debug line
-console.log(process.env.SECRET);
+console.log("Mapbox Token:", process.env.MAPBOX_TOKEN); // Debugging line
 
-const express = require('express');
+//basic database setups
+
+const express = require("express");
 const app = express();
-const path = require('path');
-const ejsMate = require('ejs-mate');
-const methodOverride = require('method-override');
-const session = require('express-session');
-const connectFlash = require('connect-flash');
-const listingRoutes = require('./routes/listing.js');
-const reviewRoutes = require('./routes/review.js');
-const userRoutes = require('./routes/user');
-const authRoutes = require('./routes/auth');
-const Doctor = require('./models/Doctor');
-const ExpressError = require('./utils/ExpressError');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const passport = require('passport');
-const passportLocal = require('passport-local');
-const User = require('./models/user');
+const mongoose = require("mongoose");
+const path = require("path"); 
+const methodOverride = require("method-override");
+const ejsMate = require("ejs-mate"); 
+const ExpressError = require("./utils/ExpressError.js");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const flash = require("connect-flash");
 
-app.engine('ejs', ejsMate);
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+const listingRouter = require("./routes/listing.js");
+const reviewRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
+const { Server } = require("http");
 
-app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, 'public')));
 
+
+//MOGODB ATLUS Server
+// const Mongo_URL = process.env.ATLAS_URL;
 const Mongo_URL = "mongodb://127.0.0.1:27017/wanderlust";
-main().then(() => {
-  console.log('MongoDB is connected');
-}).catch(err => console.log(err));
-async function main() {
-  await mongoose.connect(Mongo_URL);
+
+main()
+.then(() => {
+    console.log("connected to DB")
+})
+.catch(() => {
+    console.log(err);
+});
+
+async function main() {  
+    await mongoose.connect(Mongo_URL);  
 }
 
-const sessionConfig = {
-  secret: 'thisshouldbeabettersecret!',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-      httpOnly: true,
-      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-      maxAge: 1000 * 60 * 60 * 24 * 7
-  }
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views")) 
+app.use(express.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
+app.engine("ejs", ejsMate);
+app.use(express.static(path.join(__dirname, "/public")));
+
+const store = MongoStore.create({
+    mongoUrl: Mongo_URL, 
+    crypto : {
+        secret: process.env.SECRET,
+    },
+    touchAfter: 24 * 3600, 
+});
+
+store.on("error", () => {
+    console.log("ERROR in MONGO SESSION STORE", err);
+});
+
+const sessionOptions = {
+    store,
+    secret: process.env.SECRET,
+    resave: false, 
+    saveUninitialized: true,
 };
-app.use(session(sessionConfig));
-app.use(connectFlash());
+
+
+
+app.use(session(sessionOptions));
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new passportLocal(User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate()));
+
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.update = req.flash("update");
-  res.locals.currentUser = req.user;
-
-  next();
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.update = req.flash("update");
+    res.locals.currentUser = req.user; // Use "currentUser" consistently
+    next();
 });
 
-app.get('/demo', async (req, res) => {
-  let fakeUser = new User({
-      email: "abhi@gmail.com",
-      username: "abhi"
-  });
-  const newUser = await User.register(fakeUser, "password");
-  res.send(newUser);
-});
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/", userRouter);
 
-app.use('/listings', listingRoutes);
+app.get('/mapbox-token', (req, res) => {
+    res.json({ mapToken: process.env.MAPBOX_TOKEN });
+});
 
 app.all("*", (req, res, next) => {
-  next(new ExpressError("Page Not Found", 404));
-});
+    next(new ExpressError(404, "Page not found!!"));
+}); 
+
 
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message = "Something went Wrong !" } = err;
-  res.status(statusCode).render("error", { err });
-});
+    let {statusCode=500, message="something went wrong"} = err;
+    res.status(statusCode).send(message);
+}); 
 
-const port = 8080;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+
+app.listen(8080, () => {
+    console.log("server is listening to port 8080");
 });
