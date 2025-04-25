@@ -39,7 +39,11 @@ module.exports.create = async (req, res) => {
   const { listing } = req.body;
   const newListing = new Listing(listing);
   newListing.owner = req.user._id;
-  newListing.image = { url: req.file.path, filename: req.file.filename };
+
+  if (req.file) {
+    newListing.image = { url: req.file.path, filename: req.file.filename }; // Save image details
+  }
+
   newListing.geometry = response.body.features[0].geometry;
   await newListing.save();
 
@@ -60,10 +64,12 @@ module.exports.Edit = async (req, res) => {
 module.exports.Update = async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+
   if (req.file) {
-    listing.image = { url: req.file.path, filename: req.file.filename };
+    listing.image = { url: req.file.path, filename: req.file.filename }; // Update image details
     await listing.save();
   }
+
   req.flash('success', 'Successfully updated the listing!');
   res.redirect(`/listings/${id}`);
 };

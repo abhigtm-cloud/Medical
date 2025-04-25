@@ -1,19 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const listingSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true, // Ensure the name is required
-    },
+const listingSchema = new Schema({
+    name: String,
     description: String,
     price: Number,
+    location: String,
     image: {
         filename: String,
         url: String,
     },
-    location: String,
-    country: String,
     geometry: {
         type: {
             type: String,
@@ -24,6 +20,17 @@ const listingSchema = new mongoose.Schema({
             type: [Number],
             required: true,
         },
+    },
+    reviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Review',
+        },
+    ],
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Reference to the User model
+        required: true,
     },
 });
 

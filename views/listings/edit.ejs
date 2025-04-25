@@ -5,7 +5,7 @@
         <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="my-3">
                 <label for="title" class="form-label">Title :- </label>
-                <input type="text" name="listing[title]" value="<%= listing.title %>" class="form-control"
+                <input type="text" name="listing[title]" value="<%= listing.title %>" class="form-control">
                 <div class="valid-feedback">Title Looks Great</div>
                 <div class="invalid-feedback">Enter Title</div>
             </div>
@@ -33,16 +33,17 @@
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Original Image :- </label>
-<img src=" <%= OriginalImage %>" alt="Original Image" class="img-thumbnail" style="width: 200px; height: 200px;">    
+                <% if (OriginalImage) { %>
+                    <img src="<%= OriginalImage %>" alt="Original Image" class="img-thumbnail" style="width: 200px; height: 200px;">
+                <% } else { %>
+                    <p>No image uploaded yet.</p>
+                <% } %>
             </div>
             <div class="mb-3">
-                <label for="image" class="form-label">Upload Image :- </label>
+                <label for="image" class="form-label">Upload New Image:</label>
                 <input type="file" name="listing[image]" class="form-control">
-
             </div>
-            <br>
-            <button class="btn btn-success">Submit</button>
-            <br>
+            <button type="submit" class="btn btn-primary">Update Listing</button>
         </form>
         <br>
     </div>
