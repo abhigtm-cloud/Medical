@@ -6,7 +6,7 @@ if (!accessToken) {
     throw new Error('Mapbox access token is missing. Check your .env file.');
 }
 
-const geocodingClient = mbxGeocoding({ accessToken });
+const geocodingClient = mbxGeocoding({ accessToken});
 
 module.exports.index = async (req, res) => {
   const listings = await Listing.find({}); // Fetch all listings
